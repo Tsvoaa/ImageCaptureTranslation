@@ -36,7 +36,14 @@ namespace ImageTranslation
                     if (imgW == 0 || imgH == 0)
                     { return; }
 
-                    using()
+                    using (Bitmap bitmap = new Bitmap((int)imgW, (int)imgH))
+                    {
+                        using(Graphics g = Graphics.FromImage(bitmap))
+                        {
+                            g.CopyFromScreen(refX, refY, 0, 0, bitmap.Size);
+                        }
+                        bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+                    }
 
                 }
             }
@@ -44,6 +51,13 @@ namespace ImageTranslation
         }
         private void btnCapture_Click(object sender, EventArgs e)
         {
+            //Point xp = PointToScreen(new Point())
+
+            ImgCapture imgCapture = new ImgCapture(200, 200, 400, 400);
+
+            imgCapture.SetPath("D:\\aaa.png");
+            imgCapture.DoCaptureImage();
+
 
         }
     }
