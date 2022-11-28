@@ -1,4 +1,5 @@
 using Gma.System.MouseKeyHook;
+using IronOcr;
 using System.Runtime.InteropServices;
 
 namespace ImageTranslation
@@ -92,7 +93,8 @@ namespace ImageTranslation
             }
         }
 
-        int count = 0;
+        static int count = 0;
+        string path = "D:\\cap\\" + count + "aaa.png";
 
         private void globalHook_MouseUp(object sender, MouseEventArgs e)
         {
@@ -101,7 +103,7 @@ namespace ImageTranslation
                 mouseUpX = int.Parse(Cursor.Position.X.ToString());
                 mouseUpY = int.Parse(Cursor.Position.Y.ToString());
 
-                string path = "D:\\cap\\" + count + "aaa.png";
+                path = "D:\\cap\\" + count + "aaa.png";
 
                 count++;
 
@@ -113,9 +115,31 @@ namespace ImageTranslation
                 this.pbCapture.Image = Bitmap.FromFile(path);
                 this.pbCapture.SizeMode = PictureBoxSizeMode.StretchImage;
 
+                ImageOCR();
+
                 globalHook_MouseUp_Switch = false;
             }
         }
+
+        private void ImageOCR()
+        {
+            Bitmap oc = (Bitmap)this.pbCapture.Image;
+            var Ocr = new IronTesseract();
+            Ocr.Language = OcrLanguage.Korean;
+            using (var Input = new OcrInput(@path))
+            {
+                
+                Input.Contrast();
+                Input.Deskew();
+                Input.EnhanceResolution();
+                
+
+                var Result = Ocr.Read(Input);
+                this.txtTranslation.Text = Result.Text;
+            }
+        }
+
+
 
         private void btnCapture_Click(object sender, EventArgs e)
         {
