@@ -6,18 +6,7 @@ namespace ImageTranslation
 {
     public partial class Form1 : Form
     {
-        /*
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-
-        */
-
+        
         private IKeyboardMouseEvents globalHook;
 
         public Form1()
@@ -117,23 +106,32 @@ namespace ImageTranslation
 
                 ImageOCR();
 
+
+
                 globalHook_MouseUp_Switch = false;
             }
         }
 
+        private void TranslationLanguage()
+        {
+
+
+
+
+            this.txtTranslationTo.Text = "";
+        }
+
         private void ImageOCR()
         {
-            Bitmap oc = (Bitmap)this.pbCapture.Image;
+            //Bitmap oc = (Bitmap)this.pbCapture.Image;
             var Ocr = new IronTesseract();
             Ocr.Language = OcrLanguage.Korean;
             using (var Input = new OcrInput(@path))
             {
-                
                 Input.Contrast();
-                Input.Deskew();
+                //Input.Deskew();
                 Input.EnhanceResolution();
                 
-
                 var Result = Ocr.Read(Input);
                 this.txtTranslation.Text = Result.Text;
             }

@@ -31,6 +31,7 @@
             this.btnCapture = new System.Windows.Forms.Button();
             this.pbCapture = new System.Windows.Forms.PictureBox();
             this.txtTranslation = new System.Windows.Forms.TextBox();
+            this.txtTranslationTo = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbCapture)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,18 +55,30 @@
             // 
             // txtTranslation
             // 
-            this.txtTranslation.Location = new System.Drawing.Point(516, 41);
+            this.txtTranslation.Location = new System.Drawing.Point(12, 41);
             this.txtTranslation.Multiline = true;
             this.txtTranslation.Name = "txtTranslation";
+            this.txtTranslation.ReadOnly = true;
             this.txtTranslation.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtTranslation.Size = new System.Drawing.Size(591, 397);
+            this.txtTranslation.Size = new System.Drawing.Size(564, 397);
             this.txtTranslation.TabIndex = 2;
+            // 
+            // txtTranslationTo
+            // 
+            this.txtTranslationTo.Location = new System.Drawing.Point(582, 41);
+            this.txtTranslationTo.Multiline = true;
+            this.txtTranslationTo.Name = "txtTranslationTo";
+            this.txtTranslationTo.ReadOnly = true;
+            this.txtTranslationTo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtTranslationTo.Size = new System.Drawing.Size(564, 397);
+            this.txtTranslationTo.TabIndex = 3;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1119, 450);
+            this.ClientSize = new System.Drawing.Size(1170, 460);
+            this.Controls.Add(this.txtTranslationTo);
             this.Controls.Add(this.txtTranslation);
             this.Controls.Add(this.pbCapture);
             this.Controls.Add(this.btnCapture);
@@ -82,5 +95,6 @@
         private Button btnCapture;
         private PictureBox pbCapture;
         private TextBox txtTranslation;
+        private TextBox txtTranslationTo;
     }
 }
