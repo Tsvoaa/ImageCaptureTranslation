@@ -1,6 +1,11 @@
 using Gma.System.MouseKeyHook;
 using IronOcr;
+using Newtonsoft.Json.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
+using System.Text;
+using System.Text.Json.Nodes;
 
 namespace ImageTranslation
 {
@@ -96,7 +101,27 @@ namespace ImageTranslation
 
                 count++;
 
-                ImgCapture imgCapture = new ImgCapture(mouseDownX, mouseDownY, mouseUpX - mouseDownX, mouseUpY - mouseDownY);
+                ImgCapture imgCapture = null;
+
+                if(mouseDownX > mouseUpX && mouseDownY > mouseUpY)
+                {
+                    
+                    imgCapture = new ImgCapture(mouseUpX, mouseUpY, mouseDownX - mouseUpX, mouseDownY - mouseUpY);
+                }
+                else if(mouseDownX < mouseUpX && mouseDownY < mouseUpY)
+                {
+                    imgCapture = new ImgCapture(mouseDownX, mouseDownY, mouseUpX - mouseDownX, mouseUpY - mouseDownY);
+                }
+                else if(mouseDownX > mouseUpX && mouseDownY < mouseUpY)
+                {
+                    imgCapture = new ImgCapture(mouseUpX, mouseDownY, mouseDownX - mouseUpX, mouseUpY - mouseDownY);
+                }
+                else if(mouseDownX < mouseUpX && mouseDownY > mouseUpY)
+                {
+                    imgCapture = new ImgCapture(mouseDownX, mouseUpY, mouseUpX - mouseDownX, mouseDownY = mouseUpY);
+                }
+
+                
 
                 imgCapture.SetPath(path);
                 imgCapture.DoCaptureImage();
@@ -106,7 +131,7 @@ namespace ImageTranslation
 
                 ImageOCR();
 
-
+                Papago();
 
                 globalHook_MouseUp_Switch = false;
             }
@@ -116,9 +141,75 @@ namespace ImageTranslation
         {
 
 
-
+            
 
             this.txtTranslationTo.Text = "";
+        }
+
+        private void Papago()
+        {
+            int TranslationCount = this.txtTranslation.Lines.Length;
+            this.txtTranslationTo.Text = "";
+
+            WebRequest webRequest = null;
+            WebResponse webResponse = null;
+            Stream stream = null;
+            StreamReader streamReader = null;
+
+            string url = "https://openapi.naver.com/v1/papago/n2mt";
+
+            
+
+            for (int i = 0; i < TranslationCount; i++)
+            {
+
+                if (this.txtTranslation.Lines[i] != "")
+                {
+                    string param = String.Format("source=ko&target=en&text={0}", this.txtTranslation.Lines[i]);
+
+                    byte[] bytearray = Encoding.UTF8.GetBytes(param);
+
+                    webRequest = WebRequest.Create(url);
+                    webRequest.Method = "POST";
+                    webRequest.ContentType = "application/x-www-form-urlencoded";
+
+                    webRequest.Headers.Add("X-Naver-Client-Id", "RAsF16FVQVOI6TS7a7Dy");
+                    webRequest.Headers.Add("X-Naver-Client-Secret", "VSGwbT9kKl");
+
+
+                    webRequest.ContentLength = bytearray.Length;
+
+                    stream = webRequest.GetRequestStream();
+                    stream.Write(bytearray, 0, bytearray.Length);
+                    stream.Close();
+
+                    webResponse = webRequest.GetResponse();
+                    stream = webResponse.GetResponseStream();
+                    streamReader = new StreamReader(stream);
+                    string sReturn = streamReader.ReadToEnd();
+
+                    streamReader.Close();
+                    stream.Close();
+                    webResponse.Close();
+
+                    JObject jObject = JObject.Parse(sReturn);
+
+                    this.txtTranslationTo.Text += jObject["message"]["result"]["translatedText"].ToString() + Environment.NewLine;
+                }
+                else
+                {
+                    this.txtTranslationTo.Text += Environment.NewLine;
+                }
+                
+                
+
+                
+
+
+            }
+
+            
+
         }
 
         private void ImageOCR()
