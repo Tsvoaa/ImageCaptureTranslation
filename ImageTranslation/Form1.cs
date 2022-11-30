@@ -90,14 +90,24 @@ namespace ImageTranslation
         {
             Pen p = new Pen(Color.Red, 1);
 
-            
-
             IntPtr desktopPtr = GetDC(IntPtr.Zero);
             using (Graphics g = Graphics.FromHdc(desktopPtr))
             {
-                g.DrawRectangle(p, mouseDownX, mouseDownY, int.Parse(Cursor.Position.X.ToString()) - mouseDownX, int.Parse(Cursor.Position.Y.ToString()) - mouseDownY);
+
+                Rectangle rect = new Rectangle(mouseDownX, mouseDownY, int.Parse(Cursor.Position.X.ToString()) - mouseDownX, int.Parse(Cursor.Position.Y.ToString()) - mouseDownY);
+
+                g.DrawRectangle(p, rect);
+
+                
+
+                ReleaseDC(IntPtr.Zero, desktopPtr);
+
+                
+
             }
-            ReleaseDC(IntPtr.Zero, desktopPtr);
+           
+
+
         }
 
         private void globalHook_MouseMove(object sender, MouseEventArgs e)
@@ -105,8 +115,10 @@ namespace ImageTranslation
             
             if (globalHook_MouseMove_Switch)
             {
-                DrawRect();
+                //DrawRect();     
+
             }
+
         }
 
         private void globalHook_MouseDown(object sender, MouseEventArgs e)
@@ -116,7 +128,7 @@ namespace ImageTranslation
                 mouseDownX = int.Parse(Cursor.Position.X.ToString());
                 mouseDownY = int.Parse(Cursor.Position.Y.ToString());
 
-                //DrawRect();
+                DrawRect();
 
                 globalHook_MouseMove_Switch = true;
                 globalHook_MouseUp_Switch = true;
@@ -131,7 +143,7 @@ namespace ImageTranslation
         {
             if(globalHook_MouseUp_Switch)
             {
-                //DrawRect();
+                DrawRect();
 
                 mouseUpX = int.Parse(Cursor.Position.X.ToString());
                 mouseUpY = int.Parse(Cursor.Position.Y.ToString());
