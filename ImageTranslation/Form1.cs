@@ -1,17 +1,25 @@
 using Gma.System.MouseKeyHook;
+using System.Runtime.InteropServices;
 using IronOcr;
 using Newtonsoft.Json.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json.Nodes;
 
 namespace ImageTranslation
 {
+    
     public partial class Form1 : Form
     {
+        [DllImport("USER32.DLL")]
+        public static extern IntPtr GetDC(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
         
+
         private IKeyboardMouseEvents globalHook;
 
         public Form1()
@@ -22,6 +30,7 @@ namespace ImageTranslation
 
             globalHook.MouseDown += globalHook_MouseDown;
             globalHook.MouseUp += globalHook_MouseUp;
+            globalHook.MouseMove += globalHook_MouseMove;
 
         }
 
@@ -70,11 +79,35 @@ namespace ImageTranslation
 
         bool globalHook_MouseDown_Switch = false;
         bool globalHook_MouseUp_Switch = false;
+        bool globalHook_MouseMove_Switch = false;
 
         int mouseDownX = 0;
         int mouseDownY = 0;
         int mouseUpX = 0;
         int mouseUpY = 0;
+
+        private void DrawRect()
+        {
+            Pen p = new Pen(Color.Red, 1);
+
+            
+
+            IntPtr desktopPtr = GetDC(IntPtr.Zero);
+            using (Graphics g = Graphics.FromHdc(desktopPtr))
+            {
+                g.DrawRectangle(p, mouseDownX, mouseDownY, int.Parse(Cursor.Position.X.ToString()) - mouseDownX, int.Parse(Cursor.Position.Y.ToString()) - mouseDownY);
+            }
+            ReleaseDC(IntPtr.Zero, desktopPtr);
+        }
+
+        private void globalHook_MouseMove(object sender, MouseEventArgs e)
+        {
+            
+            if (globalHook_MouseMove_Switch)
+            {
+                DrawRect();
+            }
+        }
 
         private void globalHook_MouseDown(object sender, MouseEventArgs e)
         {
@@ -83,6 +116,10 @@ namespace ImageTranslation
                 mouseDownX = int.Parse(Cursor.Position.X.ToString());
                 mouseDownY = int.Parse(Cursor.Position.Y.ToString());
 
+                //DrawRect();
+
+                globalHook_MouseMove_Switch = true;
+                globalHook_MouseUp_Switch = true;
                 globalHook_MouseDown_Switch = false;
             }
         }
@@ -94,8 +131,13 @@ namespace ImageTranslation
         {
             if(globalHook_MouseUp_Switch)
             {
+                //DrawRect();
+
                 mouseUpX = int.Parse(Cursor.Position.X.ToString());
                 mouseUpY = int.Parse(Cursor.Position.Y.ToString());
+
+                globalHook_MouseMove_Switch = false;
+                globalHook_MouseUp_Switch = false;
 
                 path = "D:\\cap\\" + count + "aaa.png";
 
@@ -121,8 +163,6 @@ namespace ImageTranslation
                     imgCapture = new ImgCapture(mouseDownX, mouseUpY, mouseUpX - mouseDownX, mouseDownY = mouseUpY);
                 }
 
-                
-
                 imgCapture.SetPath(path);
                 imgCapture.DoCaptureImage();
 
@@ -133,17 +173,8 @@ namespace ImageTranslation
 
                 Papago();
 
-                globalHook_MouseUp_Switch = false;
+                
             }
-        }
-
-        private void TranslationLanguage()
-        {
-
-
-            
-
-            this.txtTranslationTo.Text = "";
         }
 
         private void Papago()
@@ -172,10 +203,8 @@ namespace ImageTranslation
                     webRequest = WebRequest.Create(url);
                     webRequest.Method = "POST";
                     webRequest.ContentType = "application/x-www-form-urlencoded";
-
                     webRequest.Headers.Add("X-Naver-Client-Id", "RAsF16FVQVOI6TS7a7Dy");
                     webRequest.Headers.Add("X-Naver-Client-Secret", "VSGwbT9kKl");
-
 
                     webRequest.ContentLength = bytearray.Length;
 
@@ -200,16 +229,7 @@ namespace ImageTranslation
                 {
                     this.txtTranslationTo.Text += Environment.NewLine;
                 }
-                
-                
-
-                
-
-
             }
-
-            
-
         }
 
         private void ImageOCR()
@@ -228,12 +248,9 @@ namespace ImageTranslation
             }
         }
 
-
-
         private void btnCapture_Click(object sender, EventArgs e)
         {
             globalHook_MouseDown_Switch = true;
-            globalHook_MouseUp_Switch = true;
 
         }
 
