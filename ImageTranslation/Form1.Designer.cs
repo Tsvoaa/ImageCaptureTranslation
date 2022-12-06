@@ -32,6 +32,8 @@
             this.pbCapture = new System.Windows.Forms.PictureBox();
             this.txtTranslation = new System.Windows.Forms.TextBox();
             this.txtTranslationTo = new System.Windows.Forms.TextBox();
+            this.cbBefore = new System.Windows.Forms.ComboBox();
+            this.cbAfter = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbCapture)).BeginInit();
             this.SuspendLayout();
             // 
@@ -73,11 +75,41 @@
             this.txtTranslationTo.Size = new System.Drawing.Size(564, 397);
             this.txtTranslationTo.TabIndex = 3;
             // 
+            // cbBefore
+            // 
+            this.cbBefore.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbBefore.FormattingEnabled = true;
+            this.cbBefore.Items.AddRange(new object[] {
+            "한국어",
+            "영어",
+            "일본어",
+            "중국어"});
+            this.cbBefore.Location = new System.Drawing.Point(455, 12);
+            this.cbBefore.Name = "cbBefore";
+            this.cbBefore.Size = new System.Drawing.Size(121, 23);
+            this.cbBefore.TabIndex = 4;
+            // 
+            // cbAfter
+            // 
+            this.cbAfter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAfter.FormattingEnabled = true;
+            this.cbAfter.Items.AddRange(new object[] {
+            "한국어",
+            "영어",
+            "일본어",
+            "중국어"});
+            this.cbAfter.Location = new System.Drawing.Point(1025, 12);
+            this.cbAfter.Name = "cbAfter";
+            this.cbAfter.Size = new System.Drawing.Size(121, 23);
+            this.cbAfter.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1170, 460);
+            this.Controls.Add(this.cbAfter);
+            this.Controls.Add(this.cbBefore);
             this.Controls.Add(this.txtTranslationTo);
             this.Controls.Add(this.txtTranslation);
             this.Controls.Add(this.pbCapture);
@@ -96,5 +128,7 @@
         private PictureBox pbCapture;
         private TextBox txtTranslation;
         private TextBox txtTranslationTo;
+        private ComboBox cbBefore;
+        private ComboBox cbAfter;
     }
 }

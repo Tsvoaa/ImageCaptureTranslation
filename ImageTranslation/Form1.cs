@@ -12,6 +12,7 @@ namespace ImageTranslation
     
     public partial class Form1 : Form
     {
+        // 폼 영역을 벗어난 운영체제 바탕화면에 도형을 그리기 위해 선언, 후킹
         [DllImport("USER32.DLL")]
         public static extern IntPtr GetDC(IntPtr hwnd);
 
@@ -19,7 +20,7 @@ namespace ImageTranslation
         public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
         
-
+        // 운영체제가 받는 마우스 메시지를 훔쳐오기 위한 훅
         private IKeyboardMouseEvents globalHook;
 
         public Form1()
@@ -28,6 +29,7 @@ namespace ImageTranslation
 
             globalHook = Hook.GlobalEvents();
 
+            // 이벤트를 추가
             globalHook.MouseDown += globalHook_MouseDown;
             globalHook.MouseUp += globalHook_MouseUp;
             globalHook.MouseMove += globalHook_MouseMove;
@@ -77,15 +79,18 @@ namespace ImageTranslation
 
         }
 
+        // 마우스의 움직임을 제어하기 위한 bool자료형
         bool globalHook_MouseDown_Switch = false;
         bool globalHook_MouseUp_Switch = false;
         bool globalHook_MouseMove_Switch = false;
 
+        // 마우스의 좌표값을 저장
         int mouseDownX = 0;
         int mouseDownY = 0;
         int mouseUpX = 0;
         int mouseUpY = 0;
 
+        // 캡처 영역을 표시하는 함수
         private void DrawRect()
         {
             Pen p = new Pen(Color.Red, 1);
@@ -110,6 +115,7 @@ namespace ImageTranslation
 
         }
 
+        // 마우스의 좌표값 및 캡처 영역을 계산
         private void globalHook_MouseMove(object sender, MouseEventArgs e)
         {
             
@@ -135,13 +141,10 @@ namespace ImageTranslation
                 globalHook_MouseDown_Switch = false;
             }
         }
-
-        static int count = 0;
-        string path = "D:\\cap\\" + count + "aaa.png";
-
+       
         private void globalHook_MouseUp(object sender, MouseEventArgs e)
         {
-            if(globalHook_MouseUp_Switch)
+            if (globalHook_MouseUp_Switch)
             {
                 DrawRect();
 
@@ -157,20 +160,20 @@ namespace ImageTranslation
 
                 ImgCapture imgCapture = null;
 
-                if(mouseDownX > mouseUpX && mouseDownY > mouseUpY)
+                if (mouseDownX > mouseUpX && mouseDownY > mouseUpY)
                 {
-                    
+
                     imgCapture = new ImgCapture(mouseUpX, mouseUpY, mouseDownX - mouseUpX, mouseDownY - mouseUpY);
                 }
-                else if(mouseDownX < mouseUpX && mouseDownY < mouseUpY)
+                else if (mouseDownX < mouseUpX && mouseDownY < mouseUpY)
                 {
                     imgCapture = new ImgCapture(mouseDownX, mouseDownY, mouseUpX - mouseDownX, mouseUpY - mouseDownY);
                 }
-                else if(mouseDownX > mouseUpX && mouseDownY < mouseUpY)
+                else if (mouseDownX > mouseUpX && mouseDownY < mouseUpY)
                 {
                     imgCapture = new ImgCapture(mouseUpX, mouseDownY, mouseDownX - mouseUpX, mouseUpY - mouseDownY);
                 }
-                else if(mouseDownX < mouseUpX && mouseDownY > mouseUpY)
+                else if (mouseDownX < mouseUpX && mouseDownY > mouseUpY)
                 {
                     imgCapture = new ImgCapture(mouseDownX, mouseUpY, mouseUpX - mouseDownX, mouseDownY = mouseUpY);
                 }
@@ -185,30 +188,42 @@ namespace ImageTranslation
 
                 Papago();
 
-                
+
             }
         }
 
+
+        static int count = 0;
+        // 캡처한 파일을 저장하는 경로
+        string path = "D:\\cap\\" + count + "aaa.png";
+
+       // 네이버 파파고 API를 이용한 번역
         private void Papago()
         {
+            // 번역할 텍스트의 길이를 저장
             int TranslationCount = this.txtTranslation.Lines.Length;
             this.txtTranslationTo.Text = "";
 
+            // 파파고 api를 사용하기 위한 객체 생성
             WebRequest webRequest = null;
             WebResponse webResponse = null;
             Stream stream = null;
             StreamReader streamReader = null;
 
+            // 파파고 api url
             string url = "https://openapi.naver.com/v1/papago/n2mt";
 
-            
+            // 번역할 언어를 선택하는 함수
+            string source = LanguageBefore();
+            string target = LanguageAfter();
 
+            // 번역할 텍스트의 라인별로 번역
             for (int i = 0; i < TranslationCount; i++)
             {
 
                 if (this.txtTranslation.Lines[i] != "")
                 {
-                    string param = String.Format("source=ko&target=en&text={0}", this.txtTranslation.Lines[i]);
+                    string param = String.Format("source={0}&target={1}&text={2}", source, target, this.txtTranslation.Lines[i]);
 
                     byte[] bytearray = Encoding.UTF8.GetBytes(param);
 
@@ -244,6 +259,7 @@ namespace ImageTranslation
             }
         }
 
+        // 이미지에서 글자를 추출하는 Iron Api 사용
         private void ImageOCR()
         {
             //Bitmap oc = (Bitmap)this.pbCapture.Image;
@@ -260,11 +276,88 @@ namespace ImageTranslation
             }
         }
 
+        private string LanguageBefore()
+        {
+            string LBefore = this.cbBefore.SelectedItem.ToString();
+            string result = "";
+
+            switch(LBefore)
+            {
+                case "한국어":
+                    {
+                        result = "ko";
+                        break;
+                    }
+                case "영어":
+                    {
+                        result = "en";
+                        break;
+                    }
+                case "일본어":
+                    {
+                        result = "ja";
+                        break;
+                    }
+                case "중국어":
+                    {
+                        result = "zh-CN";
+                        break;
+                    }
+                    
+            }
+
+
+            return result;
+        }
+
+        private string LanguageAfter()
+        {
+            string LAfter = this.cbAfter.SelectedItem.ToString();
+            string result = "";
+
+            switch (LAfter)
+            {
+                case "한국어":
+                    {
+                        result = "ko";
+                        break;
+                    }
+                case "영어":
+                    {
+                        result = "en";
+                        break;
+                    }
+                case "일본어":
+                    {
+                        result = "ja";
+                        break;
+                    }
+                case "중국어":
+                    {
+                        result = "zh-CN";
+                        break;
+                    }
+
+            }
+
+            return result;
+        }
+
+
+
+
         private void btnCapture_Click(object sender, EventArgs e)
         {
-            globalHook_MouseDown_Switch = true;
-
+            if(this.cbBefore.SelectedItem.ToString() == "" && this.cbAfter.SelectedItem.ToString() == "")
+            {
+                MessageBox.Show("언어를 선택해주세요!!", "오류");
+            }
+            else
+            {
+                globalHook_MouseDown_Switch = true;         
+            }
         }
+
 
    
     }
