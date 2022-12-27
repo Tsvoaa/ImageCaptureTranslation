@@ -34,6 +34,7 @@
             this.txtTranslationTo = new System.Windows.Forms.TextBox();
             this.cbBefore = new System.Windows.Forms.ComboBox();
             this.cbAfter = new System.Windows.Forms.ComboBox();
+            this.btnGameMode = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbCapture)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,11 +104,22 @@
             this.cbAfter.Size = new System.Drawing.Size(121, 23);
             this.cbAfter.TabIndex = 5;
             // 
+            // btnGameMode
+            // 
+            this.btnGameMode.Location = new System.Drawing.Point(1007, 444);
+            this.btnGameMode.Name = "btnGameMode";
+            this.btnGameMode.Size = new System.Drawing.Size(139, 23);
+            this.btnGameMode.TabIndex = 6;
+            this.btnGameMode.Text = "게임모드";
+            this.btnGameMode.UseVisualStyleBackColor = true;
+            this.btnGameMode.Click += new System.EventHandler(this.btnGameMode_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1170, 460);
+            this.ClientSize = new System.Drawing.Size(1170, 477);
+            this.Controls.Add(this.btnGameMode);
             this.Controls.Add(this.cbAfter);
             this.Controls.Add(this.cbBefore);
             this.Controls.Add(this.txtTranslationTo);
@@ -130,5 +142,6 @@
         private TextBox txtTranslationTo;
         private ComboBox cbBefore;
         private ComboBox cbAfter;
+        private Button btnGameMode;
     }
 }

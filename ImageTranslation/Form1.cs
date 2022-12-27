@@ -264,7 +264,19 @@ namespace ImageTranslation
         {
             //Bitmap oc = (Bitmap)this.pbCapture.Image;
             var Ocr = new IronTesseract();
-            Ocr.Language = OcrLanguage.Korean;
+
+            switch(this.cbBefore.SelectedItem.ToString())
+            {
+                case "한국어":
+                    Ocr.Language = OcrLanguage.Korean;
+                    break;
+                case "일본어":
+                    Ocr.Language = OcrLanguage.Japanese;
+                    break;
+                case "영어":
+                    Ocr.Language = OcrLanguage.English;
+                    break;
+            }
             using (var Input = new OcrInput(@path))
             {
                 Input.Contrast();
@@ -358,7 +370,9 @@ namespace ImageTranslation
             }
         }
 
+        private void btnGameMode_Click(object sender, EventArgs e)
+        {
 
-   
+        }
     }
 }
